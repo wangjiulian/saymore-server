@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+.DS_Store
+*.log
+build/
+logs/
+config/config.toml

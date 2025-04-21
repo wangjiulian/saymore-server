@@ -1,0 +1,61 @@
+[app]
+port = "8080"
+mode = "debug"  # debug or release
+log_level = "debug"
+
+[mysql]
+host = "localhost"
+port = "3306"
+user = "root"
+password = ""
+dbname = "saymore"
+# Maximum number of open connections in the connection pool
+max_open_conns = 1000
+# Number of idle connections reused in the connection pool
+max_idle_conns = 100
+# Connection reuse expiration time (in hours)
+max_life_time = 1
+
+[redis]
+address = "127.0.0.1:6379"
+password = ""
+db = 0
+prefix = "say-more"
+
+[access_token]
+# JWT token expiration time (in hours)
+token_expire = 168
+# JWT token refresh interval (in hours)
+token_refresh = 24
+
+[ali_oss]
+accesskeyid = ""
+accesskeysecret = ""
+bucketname = ""
+endpoint = ""
+bucketurl = ""
+
+[ali_textmsg]
+enable = true
+access_key_id = ""
+access_key_secret = ""
+alarm_template_code = ""
+endpoint = ""
+identity_template_code = ""
+sign_name = ""
+ttl = 1
+
+[course]
+cancel_interval = 60 # Time interval for no-fault course cancellation (in minutes)
+cancel_refund = 0.5 # Refund ratio for fault-based cancellations
+cancel_rule = "Cancel more than 1 hour before class for a full refund; otherwise, 50% refund"
+course_unit = 0.5 # One unit is 25 minutes (0.5 hour)
+
+[wechat]
+app_id = ""
+app_secret = ""
+
+[cron]
+cron_start_course = "@every 5m"
+cron_start_course_before = 60 # Notify X minutes before the class starts
+cron_scan_course = "@every 5m" # Scan the schedule every 5 minutes
