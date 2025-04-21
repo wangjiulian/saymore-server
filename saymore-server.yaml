@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saymore-server
+spec:
+  replicas: 1  # Default to 1 replica
+  selector:
+    matchLabels:
+      app: saymore-server
+  template:
+    metadata:
+      labels:
+        app: saymore-server
+    spec:
+      containers:
+        - name: app
+          image: <your-registry>/saymore/saymore-server:develop
+          # Core container configuration
+          ports:
+            - containerPort: 8080  # Port exposed by the container
+          command: ["/app/saymore-server"]  # Start command
+          args: ["start", "-c", "/config/config.toml"]  # Startup arguments
+          volumeMounts:
+            - name: config
+              mountPath: /config  # Mount path for configuration
+      volumes:
+        - name: config
+          configMap:
+            name: saymore-server-config  # Reference to ConfigMap
+    
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: saymore-server-config
+data:
+  config.toml: |
+    [app]
+    port = 8080
+    mode = "debug"
+    log_level = "debug"
+    
+    [mysql]
+    host = "<your-mysql-host>"
+    port = "3306"
+    user = "prod_server"
+    password = "<your-db-password>"
+    dbname = "prod_happy_talk"
+    max_open_conns = 1000  # Max open connections
+    max_idle_conns = 100   # Max idle connections
+    max_life_time = 1      # Connection reuse timeout (hours)
+    
+    [redis]
+    address = "<your-redis-host>:6379"
+    password = "<your-redis-password>"
+    db = 0
+    prefix = "prod-saymore-server"
+    
+    [access_token]
+    token_expire = 168     # Token expiration (hours)
+    token_refresh = 24     # Token refresh window (hours)
+    
+    [ali_oss]
+    accesskeyid = "<your-oss-access-key-id>"
+    accesskeysecret = "<your-oss-access-key-secret>"
+    bucketname = "saymore"
+    endpoint = "oss-cn-hangzhou.aliyuncs.com"
+    bucketurl = "https://saymore.oss-cn-hangzhou.aliyuncs.com"
+    
+    [ali_textmsg]
+    access_key_id = "<your-sms-access-key-id>"
+    access_key_secret = "<your-sms-access-key-secret>"
+    alarm_template_code = "<alarm-template-code>"
+    endpoint = "dysmsapi.aliyuncs.com"
+    identity_template_code = "<identity-template-code>"
+    sign_name = "Avata"
+    ttl = 1
+    
+    [course]
+    cancel_interval = 60         # Cancellation window (minutes)
+    cancel_refund = 0.5          # Refund rate for responsible cancellation
+    cancel_rule = "Cancel more than 1 hour before class for full refund, otherwise 50% refund"
+    
+    [wechat]
+    app_id = "<your-wechat-app-id>"
+    app_secret = "<your-wechat-secret>"
